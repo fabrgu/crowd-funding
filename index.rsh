@@ -27,10 +27,13 @@ export const main = Reach.App(() => {
     const amountNeeded = declassify(interact.amountNeeded);
     const duration = declassify(interact.duration);
   });
-  Creator.publish();
+  Creator.publish(projectName, description, amountNeeded, duration);
   commit();
   // The second one to publish always attaches
-  Funder.publish();
+  Funder.only(() => {
+    const amountToFund = declassify(interact.amountToFund);
+  });
+  Funder.publish(amountToFund);
   commit();
   // write your program here
   exit();

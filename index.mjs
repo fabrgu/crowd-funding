@@ -80,9 +80,9 @@ class Attacher extends User {
     backend.Funder(ctc, this);
   }
   async acceptAmountToFund(amountAtomic) { // Fun([UInt], Null)
-    const amount = reach.formatCurrency(amountAtomic, 4);
+    const amountToFund = reach.formatCurrency(amountAtomic, 4);
     return await new Promise(resolveAcceptedP => {
-      this.setState({view: 'AcceptTerms', amount, projectName, description, resolveAcceptedP});
+      this.setState({view: 'AcceptTerms', amountToFund, projectName, description, resolveAcceptedP});
     });
   }
   termsAccepted() {
