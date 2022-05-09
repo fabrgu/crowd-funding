@@ -5,9 +5,11 @@ const [ isProjectState, ONGOING, COMPLETE ] = makeEnum(2);
 const Project = {
   ...hasRandom,
   getProjectState: Fun([], UInt),
-  getAmountFunded: Fun([], UInt),
-  getDuration: Fun([], UInt),
-  getAmountNeeded: Fun([], UInt),
+  projectName: Bytes(500),
+  description: Bytes(1000),
+  amountNeeded: UInt,
+  duration: UInt,
+  amountFunded: UInt,
 };
 
 export const main = Reach.App(() => {
@@ -17,7 +19,7 @@ export const main = Reach.App(() => {
   });
   const Funder = Participant('Funder', {
     ...Project,
-    acceptAmountToFund: Fun([UInt], Null),
+    amountToFund: UInt,
   });
   init();
   

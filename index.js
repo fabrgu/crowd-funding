@@ -1,9 +1,8 @@
 import React from 'react';
-import AppViews from './views/AppViews.mjs';
-import DeployerViews from './views/DeployerViews.mjs';
-import AttacherViews from './views/AttacherViews.mjs';
+import AppViews from './views/AppViews';
+import DeployerViews from './views/DeployerViews';
+import AttacherViews from './views/AttacherViews';
 import {renderDOM, renderView} from './views/render';
-import './index.css';
 import * as backend from './build/index.main.mjs';
 import { loadStdlib } from '@reach-sh/stdlib';
 import { ALGO_MyAlgoConnect as MyAlgoConnect } from '@reach-sh/stdlib';

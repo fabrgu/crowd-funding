@@ -1,5 +1,5 @@
 import React from 'react';
-import UserViews from './UserViews.mjs';
+import UserViews from './UserViews';
 
 const exports = {...UserViews};
 
