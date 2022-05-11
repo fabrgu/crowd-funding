@@ -20,7 +20,7 @@ exports.Wrapper = class extends React.Component {
 exports.SetProject = class extends React.Component {
   render() {
     const projectName = (this.state || {}).projectName;
-    const description = (this.description || {}).description;
+    const description = (this.state || {}).description;
     const {parent, defaultDuration, standardUnit} = this.props;
     const amountNeeded = (this.state || {}).amountNeeded;
     const duration = (this.state || {}).duration || defaultDuration;
@@ -57,11 +57,16 @@ exports.SetProject = class extends React.Component {
 
 exports.Deploy = class extends React.Component {
   render() {
-    const {parent, amountNeeded, standardUnit} = this.props;
+    const {parent, projectName, description, duration, amountNeeded, standardUnit} = this.props;
     return (
       <div>
-        Project (amount needed): <strong>{amountNeeded}</strong> {standardUnit}
+        Project: {projectName}
         <br />
+        Description: {description}
+        <br  />
+        Duration: {duration}
+        <br />
+        (amount needed): <strong>{amountNeeded}</strong> {standardUnit}
         <button
           onClick={() => parent.deploy()}
         >Deploy</button>
