@@ -61,10 +61,29 @@ class Deployer extends User {
     this.duration = this.state.duration;
     this.projectName = this.state.projectName;
     this.description = this.state.description;
-    this.deadline = {ETH: 10, ALGO: 100, CFX: 1000}[reach.connector]; // UInt
-    backend.Creator(ctc, this);
-    const ctcInfoStr = JSON.stringify(await ctc.getInfo(), null, 2);
-    this.setState({view: 'WaitingForAttacher', ctcInfoStr});
+    // this.deadline = {ETH: 10, ALGO: 100, CFX: 1000}[reach.connector]; // UInt
+    console.log(ctc);
+    console.log(this);
+    console.log('before Creator');
+    try {
+      backend.Creator(ctc, this);
+    } catch(error) {
+      console.error(error);
+    }
+    console.log('after Creator');
+    try {
+      console.log('trying');
+      const ctcInfo = await ctc.getInfo();
+      console.log(ctcInfo);
+      const ctcInfoStr = JSON.stringify(ctcInfo, null, 2);
+      console.log(ctcInfoStr);
+      console.log('before view change');
+      this.setState({view: 'WaitingForAttacher', ctcInfoStr});
+      console.log('after view change');
+    } catch(error) {
+      console.log('erroring out');
+      console.log(error);
+    }
   }
   render() { return renderView(this, DeployerViews); }
 }

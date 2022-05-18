@@ -8,14 +8,13 @@ const Project = {
   projectName: Bytes(500),
   description: Bytes(1000),
   amountNeeded: UInt,
-  duration: UInt,
+  duration: UInt, // time delta (blocks/rounds)
   amountFunded: UInt,
 };
 
 export const main = Reach.App(() => {
   const Creator = Participant('Creator', {
     ...Project,
-    deadline: UInt, // time delta (blocks/rounds)
   });
   const Funder = Participant('Funder', {
     ...Project,
