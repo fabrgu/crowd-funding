@@ -14,6 +14,16 @@ reach.setWalletFallback(reach.walletFallback({
 const {standardUnit} = reach;
 const defaults = {defaultFundAmt: '10', defaultDuration: '7', standardUnit};
 
+const interact = {
+  getAmountNeeded: async() => {
+      return 50
+  },
+  getDeadLine: async() => {
+     return reach.getNetworkTime();
+  },
+ ready: () => { throw 'Contract has been deployed'; }
+}
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -51,8 +61,8 @@ class Deployer extends User {
     super(props);
     this.state = {view: 'SetProject'};
   }
-  setProjectDetails(projectName, description, duration, amountNeeded) { 
-    this.setState({view: 'Deploy', projectName, description, duration, amountNeeded}); 
+  setProjectDetails(projectName, duration, amountNeeded) { 
+    this.setState({view: 'Deploy', projectName, duration, amountNeeded}); 
   }
   async deploy() {
     const ctc = this.props.acc.contract(backend);
@@ -60,13 +70,12 @@ class Deployer extends User {
     this.amountNeeded = reach.parseCurrency(this.state.amountNeeded); // UInt
     this.duration = this.state.duration;
     this.projectName = this.state.projectName;
-    this.description = this.state.description;
     // this.deadline = {ETH: 10, ALGO: 100, CFX: 1000}[reach.connector]; // UInt
     console.log(ctc);
     console.log(this);
     console.log('before Creator');
     try {
-      backend.Creator(ctc, this);
+      backend.Creator(ctc, interact);
     } catch(error) {
       console.error(error);
     }
@@ -100,7 +109,7 @@ class Attacher extends User {
   async acceptAmountToFund(amountAtomic) { // Fun([UInt], Null)
     const amountToFund = reach.formatCurrency(amountAtomic, 4);
     return await new Promise(resolveAcceptedP => {
-      this.setState({view: 'AcceptTerms', amountToFund, projectName, description, resolveAcceptedP});
+      this.setState({view: 'AcceptTerms', amountToFund, projectName, resolveAcceptedP});
     });
   }
   termsAccepted() {

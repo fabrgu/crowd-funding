@@ -20,7 +20,6 @@ exports.Wrapper = class extends React.Component {
 exports.SetProject = class extends React.Component {
   render() {
     const projectName = (this.state || {}).projectName;
-    const description = (this.state || {}).description;
     const {parent, defaultDuration, standardUnit} = this.props;
     const amountNeeded = (this.state || {}).amountNeeded;
     const duration = (this.state || {}).duration || defaultDuration;
@@ -31,10 +30,6 @@ exports.SetProject = class extends React.Component {
           onChange={(e) => this.setState({projectName: e.currentTarget.value})}
         /> name
         <br />
-        <input
-          type='text'
-          onChange={(e) => this.setState({description: e.currentTarget.value})}
-        /> description
         <br />
         <input
           type='number'
@@ -48,7 +43,7 @@ exports.SetProject = class extends React.Component {
         /> {standardUnit}
         <br />
         <button
-          onClick={() => parent.setProjectDetails(projectName, description, duration, amountNeeded)}
+          onClick={() => parent.setProjectDetails(projectName, duration, amountNeeded)}
         >Set Project Details</button>
       </div>
     );
@@ -57,12 +52,10 @@ exports.SetProject = class extends React.Component {
 
 exports.Deploy = class extends React.Component {
   render() {
-    const {parent, projectName, description, duration, amountNeeded, standardUnit} = this.props;
+    const {parent, projectName, duration, amountNeeded, standardUnit} = this.props;
     return (
       <div>
         Project: {projectName}
-        <br />
-        Description: {description}
         <br  />
         Duration: {duration}
         <br />

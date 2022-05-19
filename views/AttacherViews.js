@@ -50,14 +50,13 @@ exports.Attaching = class extends React.Component {
 
 exports.AcceptTerms = class extends React.Component {
   render() {
-    const {projectName, description, amountToFund, standardUnit, parent} = this.props;
+    const {projectName, amountToFund, standardUnit, parent} = this.props;
     const {disabled} = this.state || {};
     return (
       <div>
         The terms are:
         <br />
         Project: {projectName}
-        Description: {description}
         Amount to fund: {amountToFund} {standardUnit}
         <br />
         <br />
@@ -74,7 +73,7 @@ exports.AcceptTerms = class extends React.Component {
 }
 
 exports.ProjectFunded = class extends React.Component {
-  // show name/description how much it's funded/how much more to fund
+  // show name how much it's funded/how much more to fund
   render() {
     return (
       <div>
