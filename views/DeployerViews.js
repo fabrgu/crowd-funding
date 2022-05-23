@@ -1,5 +1,11 @@
 import React from 'react';
 import UserViews from './UserViews';
+import Alert from 'react-bootstrap/Alert'
+import Button from 'react-bootstrap/Button'
+import Form from 'react-bootstrap/Form'
+import Container from 'react-bootstrap/Container'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
 
 const exports = {...UserViews};
 
@@ -24,28 +30,41 @@ exports.SetProject = class extends React.Component {
     const amountNeeded = (this.state || {}).amountNeeded;
     const duration = (this.state || {}).duration || defaultDuration;
     return (
-      <div>
-        <input
-          type='text'
-          onChange={(e) => this.setState({projectName: e.currentTarget.value})}
-        /> name
+      <Container>
+        <Row>
+          <Col>
+            <Form.Label htmlFor="projectName">Name</Form.Label>
+            <Form.Control type="text" id="projectName" aria-describedby="projectName"
+                onChange={(e) => this.setState({projectName: e.currentTarget.value})}>
+            </Form.Control>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Form.Label htmlFor="duration">Duration</Form.Label>
+            <Form.Control type="number" id="duration" aria-describedby="duration"
+                  placeholder={defaultDuration}
+                  onChange={(e) => this.setState({duration: e.currentTarget.value})}>
+            </Form.Control>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Form.Label htmlFor="amountNeeded">Amount Needed ({standardUnit})</Form.Label>
+            <Form.Control type="number" id="amountNeeded" aria-describedby="amountNeeded"
+                  onChange={(e) => this.setState({amountNeeded: e.currentTarget.value})}>
+            </Form.Control>
+          </Col>
+        </Row>
         <br />
-        <br />
-        <input
-          type='number'
-          placeholder={defaultDuration}
-          onChange={(e) => this.setState({duration: e.currentTarget.value})}
-        /> days
-        <br />
-        <input
-          type='number'
-          onChange={(e) => this.setState({amountNeeded: e.currentTarget.value})}
-        /> {standardUnit}
-        <br />
-        <button
-          onClick={() => parent.setProjectDetails(projectName, duration, amountNeeded)}
-        >Set Project Details</button>
-      </div>
+        <Row>
+          <Col>
+            <Button variant="primary"
+                onClick={() => parent.setProjectDetails(projectName, duration, amountNeeded)}
+              >Set Project Details</Button>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }
@@ -54,16 +73,31 @@ exports.Deploy = class extends React.Component {
   render() {
     const {parent, projectName, duration, amountNeeded, standardUnit} = this.props;
     return (
-      <div>
-        Project: {projectName}
+      <Container>
+        <Row>
+          <Col>
+            Project: {projectName}
+          </Col>
+        </Row>
         <br  />
-        Duration: {duration}
+        <Row>
+          <Col>
+            Duration: {duration}
+          </Col>
+        </Row>
         <br />
-        (amount needed): <strong>{amountNeeded}</strong> {standardUnit}
-        <button
-          onClick={() => parent.deploy()}
-        >Deploy</button>
-      </div>
+        <Row>
+          <Col>
+            Amount Needed: <strong>{amountNeeded}</strong> {standardUnit}
+          </Col>
+        </Row>
+        <br />
+        <Row>
+          <Col>
+            <Button variant="primary" onClick={() => parent.deploy()}>Deploy</Button>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }
@@ -71,7 +105,9 @@ exports.Deploy = class extends React.Component {
 exports.Deploying = class extends React.Component {
   render() {
     return (
-      <div>Deploying... please wait.</div>
+      <Alert key="warning" variant="warning">
+        Deploying, please wait...
+      </Alert>
     );
   }
 }
@@ -92,14 +128,14 @@ exports.WaitingForAttacher = class extends React.Component {
     const {ctcInfoStr} = this.props;
     return (
       <div>
-        Waiting for Attacher to join...
-        <br /> Please give them this contract info:
+        <Alert key="warning" variant="warning">Waiting for Project to be funded ..</Alert>
+        Please give funders this contract info:
         <pre className='ContractInfo'>
           {ctcInfoStr}
         </pre>
-        <button
+        <Button variant="primary"
           onClick={(e) => this.copyToClipboard(e.currentTarget)}
-        >Copy to clipboard</button>
+        >Copy to clipboard</Button>
       </div>
     )
   }

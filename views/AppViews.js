@@ -1,4 +1,10 @@
 import React from 'react';
+import Alert from 'react-bootstrap/Alert'
+import Button from 'react-bootstrap/Button'
+import Form from 'react-bootstrap/Form'
+import Container from 'react-bootstrap/Container'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
 
 const exports = {};
 
@@ -7,8 +13,8 @@ exports.Wrapper = class extends React.Component {
     const {content} = this.props;
     return (
       <div className="App">
-        <header className="App-header" id="root">
-          <h1>Crowdfunding</h1>
+        <header className="App-header text-center" id="root">
+          <h1>Crowd-funding</h1>
           {content}
         </header>
       </div>
@@ -19,10 +25,10 @@ exports.Wrapper = class extends React.Component {
 exports.ConnectAccount = class extends React.Component {
   render() {
     return (
-      <div>
+      <Alert key="primary" variant="primary">
         Please wait while we connect to your account.
         If this takes more than a few seconds, there may be something wrong.
-      </div>
+      </Alert>
     )
   }
 }
@@ -32,23 +38,39 @@ exports.FundAccount = class extends React.Component {
     const {bal, standardUnit, defaultFundAmt, parent} = this.props;
     const amt = (this.state || {}).amt || defaultFundAmt;
     return (
-      <div>
+      <Container>
         <h2>Fund account</h2>
         <br />
-        Balance: {bal} {standardUnit}
+        <Row>
+          <Col>Balance: {bal} {standardUnit}</Col>
+        </Row>
         <hr />
-        Would you like to fund your account with additional {standardUnit}?
+        <Row>
+          <Col>Would you like to fund your account with additional {standardUnit}?</Col>
+        </Row>
         <br />
-        (This only works on certain devnets)
+        <Row>
+          <Col>(This only works on certain devnets)</Col>
+        </Row>
         <br />
-        <input
-          type='number'
-          placeholder={defaultFundAmt}
-          onChange={(e) => this.setState({amt: e.currentTarget.value})}
-        />
-        <button onClick={() => parent.fundAccount(amt)}>Fund Account</button>
-        <button onClick={() => parent.skipFundAccount()}>Skip</button>
-      </div>
+        <Row>
+          <Col>
+            <Form.Label htmlFor="fundAccount">Fund Account</Form.Label>
+            <Form.Control type="number" id="fundAccount" aria-describedby="fundAccount"
+              placeholder={defaultDuration}
+              onChange={(e) => this.setState({duration: e.currentTarget.value})}>
+            </Form.Control>
+        </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Button variant="primary" onClick={() => parent.fundAccount(amt)}>Fund Account</Button>
+          </Col>
+          <Col>
+            <Button variant="secondary" onClick={() => parent.skipFundAccount()}>Skip</Button>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }
@@ -61,15 +83,15 @@ exports.DeployerOrAttacher = class extends React.Component {
         Please select a role:
         <br />
         <p>
-          <button
+          <Button variant="primary"
             onClick={() => parent.selectDeployer()}
-          >Deployer</button>
-          <br /> Create a project, deploy the contract.
+          >Project Creator (Deployer)</Button>
+          <br /> Create a project. Deploy the contract.
         </p>
         <p>
-          <button
+          <Button variant="info"
             onClick={() => parent.selectAttacher()}
-          >Attacher</button>
+          >Project Funder (Attacher) </Button>
           <br /> Attach to the Deployer's contract. Fund the project.
         </p>
       </div>

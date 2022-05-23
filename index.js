@@ -6,6 +6,7 @@ import {renderDOM, renderView} from './views/render';
 import * as backend from './build/index.main.mjs';
 import { loadStdlib } from '@reach-sh/stdlib';
 import { ALGO_MyAlgoConnect as MyAlgoConnect } from '@reach-sh/stdlib';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const reach = loadStdlib(process.env);
 reach.setWalletFallback(reach.walletFallback({
@@ -13,16 +14,6 @@ reach.setWalletFallback(reach.walletFallback({
 
 const {standardUnit} = reach;
 const defaults = {defaultFundAmt: '10', defaultDuration: '7', standardUnit};
-
-const interact = {
-  getAmountNeeded: async() => {
-      return 50
-  },
-  getDeadLine: async() => {
-     return reach.getNetworkTime();
-  },
- ready: () => { throw 'Contract has been deployed'; }
-}
 
 class App extends React.Component {
   constructor(props) {
@@ -62,6 +53,9 @@ class Deployer extends User {
     this.state = {view: 'SetProject'};
   }
   setProjectDetails(projectName, duration, amountNeeded) { 
+    console.log(projectName);
+    console.log(duration);
+    console.log(amountNeeded);
     this.setState({view: 'Deploy', projectName, duration, amountNeeded}); 
   }
   async deploy() {
@@ -71,28 +65,10 @@ class Deployer extends User {
     this.duration = this.state.duration;
     this.projectName = this.state.projectName;
     // this.deadline = {ETH: 10, ALGO: 100, CFX: 1000}[reach.connector]; // UInt
-    console.log(ctc);
-    console.log(this);
-    console.log('before Creator');
-    try {
-      backend.Creator(ctc, interact);
-    } catch(error) {
-      console.error(error);
-    }
-    console.log('after Creator');
-    try {
-      console.log('trying');
-      const ctcInfo = await ctc.getInfo();
-      console.log(ctcInfo);
-      const ctcInfoStr = JSON.stringify(ctcInfo, null, 2);
-      console.log(ctcInfoStr);
-      console.log('before view change');
-      this.setState({view: 'WaitingForAttacher', ctcInfoStr});
-      console.log('after view change');
-    } catch(error) {
-      console.log('erroring out');
-      console.log(error);
-    }
+    backend.Creator(ctc, this);
+    const ctcInfo = await ctc.getInfo();
+    const ctcInfoStr = JSON.stringify(ctcInfo, null, 2);
+    this.setState({view: 'WaitingForAttacher', ctcInfoStr});
   }
   render() { return renderView(this, DeployerViews); }
 }
@@ -106,14 +82,33 @@ class Attacher extends User {
     this.setState({view: 'Attaching'});
     backend.Funder(ctc, this);
   }
-  async acceptAmountToFund(amountAtomic) { // Fun([UInt], Null)
-    const amountToFund = reach.formatCurrency(amountAtomic, 4);
-    return await new Promise(resolveAcceptedP => {
-      this.setState({view: 'AcceptTerms', amountToFund, projectName, resolveAcceptedP});
+  async acceptAmountToFund(projectName, amountAtomic, amountFunded) {
+    const amountNeeded = reach.formatCurrency(amountAtomic, 4);
+    const amountToFund = await new Promise(resolveAcceptedP => {
+      this.setState({view: 'AcceptTerms', amountNeeded, projectName, amountFunded, resolveAcceptedP});
     });
+    console.log(amountToFund)
+    return amountToFund;
+  }
+  setAmountToFund(amountToFund, fundLimit) {
+    if (amountToFund > fundLimit) {
+        console.log("Too much");
+        this.setState({amountFundMessage: "Too much money "});
+        return;
+    }
+    if (isNaN(amountToFund) || amountToFund <= 0){
+      console.log('should not be here');
+      this.setState({amountFundMessage: ""});
+      this.setState({amountToFund: 0});
+    } else {
+      this.setState({amountFundMessage: "Ready to fund."});
+      this.setState({amountToFund: amountToFund});
+    }
+
   }
   termsAccepted() {
-    this.state.resolveAcceptedP();
+    this.state.resolveAcceptedP(this.state.amountToFund);
+    console.log('accepted');
     this.setState({view: 'ProjectFunded'});
   }
   render() { return renderView(this, AttacherViews); }

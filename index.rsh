@@ -2,12 +2,6 @@
 
 const [ isProjectState, ONGOING, COMPLETE ] = makeEnum(2);
 
-const DeployerInteract = {
-  getAmountNeeded: Fun([], UInt),
-  getDeadLine: Fun([], UInt),
-  ready: Fun([], Null)
-}
-
 const Project = {
   ...hasRandom,
   getProjectState: Fun([], UInt),
@@ -19,34 +13,45 @@ const Project = {
 
 export const main = Reach.App(() => {
   const Creator = Participant('Creator', {
-    ...DeployerInteract,
+    ...Project,
   });
   const Funder = Participant('Funder', {
     ...Project,
-    amountToFund: UInt,
+    acceptAmountToFund: Fun([Bytes(500), UInt, UInt], UInt),
   });
   init();
-  
+
   Creator.only(() => {
-    // const projectName = declassify(interact.projectName);
-    // const amountNeeded = declassify(interact.amountNeeded);
-    // const duration = declassify(interact.duration);
-    const amountNeeded = declassify(interact.getAmountNeeded());
-    const projectDeadLine = declassify(interact.getDeadLine());
-    const deployerAddress = this;
+    const projectName = declassify(interact.projectName);
+    const amountNeeded = declassify(interact.amountNeeded);
+    const duration = declassify(interact.duration);
   });
-  // Creator.publish(projectName, amountNeeded, duration);
-  Creator.publish(amountNeeded, projectDeadLine, deployerAddress);
+  Creator.publish(projectName, amountNeeded, duration);
   commit();
 
-  // Creator.publish();
-  Creator.interact.ready();
   // The second one to publish always attaches
+  // var amountFunded = 0;
+  // invariant( balance() <= amountNeeded );
+  // while ( amountFunded < amountNeeded && balance() < amountNeeded )  {
+  //   commit();
+  //   Funder.only(() => {
+  //     const amountToFund = declassify(interact.acceptAmountToFund(projectName, amountNeeded, amountFunded));
+  //   });
+  //   Funder.publish(amountToFund).pay(amountToFund);
+  //   // commit();
+  //   amountFunded = amountFunded + amountToFund;
+  //   continue;
+  // }
+  // commit();
   Funder.only(() => {
-    const amountToFund = declassify(interact.amountToFund);
+    const amountFunded = 0;
+    const amountToFund = declassify(interact.acceptAmountToFund(projectName, amountNeeded, amountFunded));
   });
-  Funder.publish(amountToFund);
+  Funder.publish(amountToFund).pay(amountToFund);
+
   commit();
-  // write your program here
+  Creator.publish();
+  transfer(balance()).to(balance() == amountNeeded ? Creator : Funder);
+  commit();
   exit();
 });
